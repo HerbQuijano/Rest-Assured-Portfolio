@@ -1,33 +1,89 @@
 package org.hquijano;
 
 import io.restassured.RestAssured;
-import static io.restassured.RestAssured.given;
+import io.restassured.path.json.JsonPath;
+import org.testng.Assert;
+import org.testng.annotations.BeforeMethod;
+import org.testng.annotations.BeforeSuite;
+import org.testng.annotations.Test;
+import utils.ReusableMethods;
+
+import java.io.File;
+import java.util.HashMap;
+import java.util.Map;
+
+import static io.restassured.RestAssured.*;
+import static org.hamcrest.Matchers.equalTo;
 
 public class APIBasics {
-    //given, when, then
+
     public static void main(String[] args) {
+        //given, when, then
 
         RestAssured.baseURI = "https://rahulshettyacademy.com";
-        // Given
-        given().log().all()
-                .queryParam("key", "qaclick123")
+        File file = new File("src/test/resources/AddPlace.json");
+        String newAddress = "1600 Amphitheatre Parkway, Mountain View, CA";
+        String keyValue = "qaclick123";
+
+        String response = given().log().all()
+                .queryParam("key", keyValue)
                 .header("Content-Type", "application/json")
-                .body("{\n" +
-                        "  \"location\": {\n" +
-                        "    \"lat\": -38.383494,\n" +
-                        "    \"lng\": 33.427362\n" +
-                        "  },\n" +
-                        "  \"accuracy\": 50,\n" +
-                        "  \"name\": \"Frontline house\",\n" +
-                        "  \"phone_number\": \"(+91) 983 893 3937\",\n" +
-                        "  \"address\": \"29, side layout, cohen 09\",\n" +
-                        "  \"types\": [\n" +
-                        "    \"shoe park\",\n" +
-                        "    \"shop\"\n" +
-                        "  ],\n" +
-                        "  \"website\": \"http://google.com\",\n" +
-                        "  \"language\": \"French-IN\"\n" +
-                        "}\n").when().post("/maps/api/place/add/json")
-                .then().log().all().assertThat().statusCode(200);
+                .body(file)
+                .when().post("/maps/api/place/add/json")
+                .then()
+                .assertThat()
+                .statusCode(200)
+                .body("scope", equalTo("APP"))
+                .extract().response().asPrettyString();
+
+        JsonPath jsonResponse = ReusableMethods.convertStringToJson(response);
+        String place_id = jsonResponse.getString("place_id");
+        System.out.println("This is the place_id: " + place_id);
+
+        String getResponse = given().log().all()
+                .queryParam("key", keyValue)
+                .queryParam("place_id", place_id)
+                .when().get("/maps/api/place/get/json")
+                .then()//.log().all()
+                .assertThat()
+                .statusCode(200)
+                .extract().response().asPrettyString();
+
+        JsonPath getJsonPath = ReusableMethods.convertStringToJson(getResponse);
+
+        String originalAddress = getJsonPath.getString("address");
+        System.out.println("This is the original address: " + originalAddress);
+
+        Map<String, String> updatePlace = new HashMap<>();
+        updatePlace.put("place_id", place_id);
+        updatePlace.put("address", newAddress);
+        updatePlace.put("key", keyValue);
+
+
+        given().log().all()
+                .header("Content-Type", "application/json")
+                //.body("{\"place_id\":\"" + place_id + ",\"address\":\"" + newAddress + ",\"key\":\"qaclick123\"}\n")
+                //.body("{\"place_id\":\"" + place_id + "\",\"address\":\"" + newAddress + "\",\"key\":\"qaclick123\"}")
+                .body(updatePlace)
+                .when().put("/maps/api/place/update/json")
+                .then().log().all()
+                .assertThat()
+                .statusCode(200);
+        System.out.println("The new address is: " + newAddress);
+
+        String newResponse = given().log().all()
+                .queryParam("key", "qaclick123")
+                .queryParam("place_id", place_id)
+                .when().get("/maps/api/place/get/json")
+                .then().log().all()
+                .assertThat()
+                .statusCode(200)
+                .extract().response().asPrettyString();
+
+        System.out.println("This is the new response: " + newResponse);
+        System.out.println(newAddress);
+        JsonPath updateJsonResponse = ReusableMethods.convertStringToJson(newResponse);
+        String updatedAddress = updateJsonResponse.getString("address");
+        Assert.assertEquals(updatedAddress, "1600 Amphitheatre Parkway, Mountain View, CA");
     }
 }

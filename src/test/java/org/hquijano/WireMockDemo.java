@@ -1,11 +1,10 @@
 package org.hquijano;
 
 import com.github.tomakehurst.wiremock.WireMockServer;
-import org.testng.annotations.BeforeClass;
 
 import static com.github.tomakehurst.wiremock.client.WireMock.*;
 
-public class WireMockDemoTest {
+public class WireMockDemo {
     static WireMockServer wireMockServer;
 
     public static void setup(){
