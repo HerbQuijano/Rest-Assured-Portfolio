@@ -25,7 +25,7 @@ public class APIBasics {
         String newAddress = "1600 Amphitheatre Parkway, Mountain View, CA";
         String keyValue = "qaclick123";
 
-        String response = given().log().all()
+        String postResponse = given().log().all()
                 .queryParam("key", keyValue)
                 .header("Content-Type", "application/json")
                 .body(file)
@@ -36,9 +36,9 @@ public class APIBasics {
                 .body("scope", equalTo("APP"))
                 .extract().response().asPrettyString();
 
-        JsonPath jsonResponse = ReusableMethods.convertStringToJson(response);
+        JsonPath jsonResponse = ReusableMethods.convertStringToJson(postResponse);
         String place_id = jsonResponse.getString("place_id");
-        System.out.println("This is the place_id: " + place_id);
+        //System.out.println("This is the place_id: " + place_id);
 
         String getResponse = given().log().all()
                 .queryParam("key", keyValue)
@@ -47,12 +47,13 @@ public class APIBasics {
                 .then()//.log().all()
                 .assertThat()
                 .statusCode(200)
+                .body("address", equalTo(""))
                 .extract().response().asPrettyString();
 
         JsonPath getJsonPath = ReusableMethods.convertStringToJson(getResponse);
 
         String originalAddress = getJsonPath.getString("address");
-        System.out.println("This is the original address: " + originalAddress);
+        //System.out.println("This is the original address: " + originalAddress);
 
         Map<String, String> updatePlace = new HashMap<>();
         updatePlace.put("place_id", place_id);
@@ -69,21 +70,22 @@ public class APIBasics {
                 .then().log().all()
                 .assertThat()
                 .statusCode(200);
-        System.out.println("The new address is: " + newAddress);
+        //System.out.println("The new address is: " + newAddress);
 
-        String newResponse = given().log().all()
+        String newGetResponse = given().log().all()
                 .queryParam("key", "qaclick123")
                 .queryParam("place_id", place_id)
                 .when().get("/maps/api/place/get/json")
                 .then().log().all()
                 .assertThat()
                 .statusCode(200)
+                .body("address", equalTo(newAddress))
                 .extract().response().asPrettyString();
 
-        System.out.println("This is the new response: " + newResponse);
-        System.out.println(newAddress);
-        JsonPath updateJsonResponse = ReusableMethods.convertStringToJson(newResponse);
+        //System.out.println("This is the new response: " + newResponse);
+        //System.out.println(newAddress);
+        JsonPath updateJsonResponse = ReusableMethods.convertStringToJson(newGetResponse);
         String updatedAddress = updateJsonResponse.getString("address");
-        Assert.assertEquals(updatedAddress, "1600 Amphitheatre Parkway, Mountain View, CA");
+        Assert.assertEquals(updatedAddress, newAddress);
     }
 }
