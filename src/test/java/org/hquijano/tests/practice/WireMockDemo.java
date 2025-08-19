@@ -1,4 +1,4 @@
-package org.hquijano;
+package org.hquijano.tests.practice;
 
 import com.github.tomakehurst.wiremock.WireMockServer;
 

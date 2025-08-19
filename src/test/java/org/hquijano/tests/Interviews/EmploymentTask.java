@@ -1,6 +1,5 @@
-package org.hquijano;
+package org.hquijano.tests.Interviews;
 
-import com.github.tomakehurst.wiremock.common.Json;
 import io.restassured.RestAssured;
 import io.restassured.path.json.JsonPath;
 import io.restassured.specification.RequestSpecification;

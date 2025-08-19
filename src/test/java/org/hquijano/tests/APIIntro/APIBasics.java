@@ -1,11 +1,8 @@
-package org.hquijano;
+package org.hquijano.tests.APIIntro;
 
 import io.restassured.RestAssured;
 import io.restassured.path.json.JsonPath;
 import org.testng.Assert;
-import org.testng.annotations.BeforeMethod;
-import org.testng.annotations.BeforeSuite;
-import org.testng.annotations.Test;
 import utils.ReusableMethods;
 
 import java.io.File;

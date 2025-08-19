@@ -1,0 +1,20 @@
+<!DOCTYPE suite SYSTEM "https://testng.org/testng-1.0.dtd" >
+<suite name="ReqRes Suite" verbose="1" parallel="false">
+
+    <!-- Tests normales (con DataProvider y GETs) -->
+    <test name="ReqRes Basic Tests">
+        <classes>
+            <class name="org.hquijano.tests.ReqResTests.ReqResTest"/>
+        </classes>
+    </test>
+
+    <!-- Tests con POJOs usando la Factory -->
+    <test name="ReqRes POJO Tests">
+        <classes>
+            <!-- Aquí NO listamos ReqResCreateUserTest directamente,
+                 sino la Factory, que creará 4 instancias con POJOs -->
+            <class name="org.hquijano.tests.ReqResTests.CreateUserFactory"/>
+        </classes>
+    </test>
+
+</suite>

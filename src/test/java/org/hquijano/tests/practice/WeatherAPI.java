@@ -1,4 +1,4 @@
-package org.hquijano;
+package org.hquijano.tests.practice;
 
 import io.restassured.RestAssured;
 import org.testng.annotations.Test;

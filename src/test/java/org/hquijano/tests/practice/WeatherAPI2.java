@@ -1,16 +1,13 @@
-package org.hquijano;
+package org.hquijano.tests.practice;
 
 import io.restassured.RestAssured;
 import io.restassured.path.json.JsonPath;
-import net.minidev.json.JSONUtil;
 
 import java.io.FileInputStream;
 import java.io.IOException;
-import java.nio.charset.StandardCharsets;
 import java.util.Properties;
 import java.util.Scanner;
 
-import static com.github.tomakehurst.wiremock.extension.responsetemplating.helpers.WireMockHelpers.jsonPath;
 import static io.restassured.RestAssured.given;
 
 public class WeatherAPI2 {
