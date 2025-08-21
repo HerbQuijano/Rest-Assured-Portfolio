@@ -26,7 +26,8 @@ public class JiraAPIPractice {
     @Test
     public void getIssueById(){
         String response = given(reqSpec)
-                .when().get("/issue/ATP-1")
+                .pathParams("issueId", "ATP-1")
+                .when().get("/issue/{issueId}")
                 .then().extract().asPrettyString();
 
         System.out.println(response);
